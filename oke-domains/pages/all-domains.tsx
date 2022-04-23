@@ -39,7 +39,7 @@ const NotConnected = ()=>{
   }}>
    <div className='mx-1'>
     <button>
-    <a href="https://metamask.io/download/" target="_blank">
+    <a href="https://metamask.io/download/" target="_blank" rel="noreferrer">
      Please Install Metamask
      </a>
      </button>
@@ -87,7 +87,7 @@ const MintComponent = ()=>{
       <p>{msg} </p>
      {
        hash &&  <p>
-       <a href={`https://rinkeby.etherscan.io/tx/${hash}`}  target="_blank" className='underline' >
+       <a href={`https://rinkeby.etherscan.io/tx/${hash}`} rel="noreferrer" target="_blank" className='underline' >
        click here for more details
        </a>
        </p>
