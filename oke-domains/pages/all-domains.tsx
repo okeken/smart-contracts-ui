@@ -7,6 +7,7 @@ import getDomainPrice from '../functions/getDomainPrice';
 import { useContract } from '../hooks/useContract';
 import DomainAbi from "../constants/domains.json"
 import { ToastContainer, toast } from 'react-toastify';
+import {injected} from '../connectors'
 
 const Home: NextPage = () => {
   const  {  account } = useActiveWeb3React()
@@ -32,6 +33,23 @@ export default Home
 const NotConnected = ()=>{
   const {activate, deactivate, account, ...others} = useActiveWeb3React()
 
+  async function connect() {
+    try {
+      await activate(injected)
+    } catch (ex) {
+      return console.log(ex)
+    }
+  }
+
+  async function disconnect() {
+    try {
+      deactivate()
+    } catch (ex) {
+      console.log(ex)
+    }
+  }
+
+
   if(!window.ethereum) return <div className='flex text-white border border-red-500 hover:hover:bg-red-500 hover:border-0 ' style={{
     borderRadius:"10px",
     padding:"10px",
@@ -53,7 +71,7 @@ const NotConnected = ()=>{
   }}>
     {/* {account} */}
    <div className='mx-1'>
-    <button onClick={()=>{}}>
+    <button onClick={connect}>
      Connect with
       Metamask</button>
       </div>
