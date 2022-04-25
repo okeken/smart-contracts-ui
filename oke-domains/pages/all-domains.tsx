@@ -1,16 +1,46 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import useActiveWeb3React from '../hooks/useActiveWeb3React';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { parseEther } from '@ethersproject/units'
 import getDomainPrice from '../functions/getDomainPrice';
 import { useContract } from '../hooks/useContract';
 import DomainAbi from "../constants/domains.json"
 import { ToastContainer, toast } from 'react-toastify';
-import {injected} from '../connectors'
+import {injected, supportedChainIds} from '../connectors'
+
+
+const checkChainId = async(supportedChains:number[])=>{
+  const c = window?.ethereum?.request({ method: 'eth_chainId' })
+  const d = await c
+  if(supportedChains.some(id => id === Number(d))){
+    return true
+  } else {
+    return false
+  }
+}
 
 const Home: NextPage = () => {
-  const  {  account } = useActiveWeb3React()
+  const [supported, setSupported]  = useState(false)
+  const [loading, setLoading] = useState(true)
+
+
+  useEffect(()=>{
+    (async ()=>{
+      const chains = await checkChainId(supportedChainIds)
+      setSupported(chains)
+      setLoading(false)
+    })()
+
+  },[])
+
+  if (typeof window !== 'undefined' && !!window.ethereum) {
+    window.ethereum.autoRefreshOnNetworkChange = false
+    window.ethereum.on('chainChanged', (chainId:any) => {
+    const supportCheck  =  supportedChainIds.some(id => id === Number(chainId))
+    setSupported(supportCheck)
+    });
+  }
 
   return (
     <div className='flex items-center justify-center h-screen bg-linear'>
@@ -20,19 +50,21 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       {
-        account && <MintComponent />
+        loading && 'Loading...'
       }
-      <NotConnected />
+      {
+         <MintComponent supported={supported} />
+      }
+        
     </div>
   )
 }
 
 export default Home
 
-
-const NotConnected = ()=>{
+const ConnectButton = ()=>{
   const {activate, deactivate, account, ...others} = useActiveWeb3React()
-
+  const [supported, setSupported]  = useState(false)
   async function connect() {
     try {
       await activate(injected)
@@ -41,51 +73,84 @@ const NotConnected = ()=>{
     }
   }
 
-  async function disconnect() {
-    try {
-      deactivate()
-    } catch (ex) {
-      console.log(ex)
+  // switch network metamask
+  async function switchNetwork(){
+    if(!window.ethereum){
+      return
     }
+    const id  = '0x'+ supportedChainIds[0].toString(16)
+    await window.ethereum.request({ method: 'wallet_switchEthereumChain', params:[{
+      chainId: id
+    }] }, )
+
   }
 
 
-  if(!window.ethereum) return <div className='flex text-white border border-red-500 hover:hover:bg-red-500 hover:border-0 ' style={{
+  const connectNetwork = async ()=>{
+    if(!window.ethereum){
+      return
+    }
+
+    if(supported){
+      await connect()
+    }
+    await switchNetwork()
+
+  }
+  useEffect(()=>{
+    (async ()=>{
+      const chains = await checkChainId(supportedChainIds)
+      setSupported(chains) 
+    })()
+
+  },[])
+
+  return <>
+
+<div 
+
+ onClick={connectNetwork}
+className='mt-3 text-white border border-red-500 hover:hover:bg-red-500 hover:border-0 cursor-pointer' style={{
     borderRadius:"10px",
     padding:"10px",
 
   }}>
-   <div className='mx-1'>
-    <button>
-    <a href="https://metamask.io/download/" target="_blank" rel="noreferrer">
-     Please Install Metamask
-     </a>
-     </button>
-      </div>
+  
+    {
+      supported ? ' Connect with Metamask' : 'Switch to Rinkeby'
+    }
   </div>
-  if(!account) return <>
-  <div className='flex text-white border border-red-500 hover:hover:bg-red-500 hover:border-0 ' style={{
-    borderRadius:"10px",
-    padding:"10px",
 
-  }}>
-    {/* {account} */}
-   <div className='mx-1'>
-    <button onClick={connect}>
-     Connect with
-      Metamask</button>
-      </div>
-  </div>
   </>
+}
+
+const NotConnected = ()=>{
+
+  if(!window.ethereum) return  <a 
+  className=''
+  href="https://metamask.io/download/" target="_blank" rel="noreferrer">
+  <div className='mt-3 text-white border border-red-500 hover:hover:bg-red-500 hover:border-0 ' style={{
+    borderRadius:"10px",
+    padding:"10px",
+  }}>
+
+     Please Install Metamask
+  
+   
+  </div>
+     </a>
+
   return <></>
 }
 
 
-const MintComponent = ()=>{
-  
-  const { chainId} = useActiveWeb3React()
+interface MintProps {
+  supported: boolean
+}
+const MintComponent = ({supported}:MintProps)=>{
+ 
   const contract = useContract('0x2F571591435AB71083E43EB84156343b41304dd8', DomainAbi , true)
-  const disable = chainId !== 4
+  const disable = !supported
   const [domain, setDomain] = useState<string>('')
   const [loading, setLoading] = useState<boolean>(false)
 
@@ -113,6 +178,7 @@ const MintComponent = ()=>{
      }
     </div>);
    }
+
   const mintDomain = async (value:Value )=>{
     setLoading(true)
     try{
@@ -147,8 +213,8 @@ const MintComponent = ()=>{
        >
      <div>
        {
-         disable && <div className='p-2 mb-4 text-center text-white border border-red-500 rounded-md'>
-           Wrong network, pls switch to Ropsten
+         (window?.ethereum &&  disable )&& <div className='p-2 mb-4 text-center text-white border border-red-500 rounded-md'>
+           Wrong network, pls switch to Rinkeby Network
            </div>
        }
      </div>
@@ -180,12 +246,21 @@ const MintComponent = ()=>{
 
 </div>
 <div className='text-center'>
-<button disabled={disable ||loading} className={`mt-3 h-10 w-20 text-white rounded-lg    ${ disable || loading ? 'cursor-not-allowed bg-red-400': 'cursor-pointer bg-red-500 hover:bg-red-600'}  `}>
+{ supported && <button disabled={disable ||loading} className={`mt-3 h-10 w-20 text-white rounded-lg    ${ disable || loading ? 'cursor-not-allowed bg-red-400': 'cursor-pointer bg-red-500 hover:bg-red-600'}  `}>
   {
     loading ? 'Minting' : 'Mint'
   }
 
-  </button>
+  </button>}
+
+{
+  ( window?.ethereum &&  !supported) &&  <ConnectButton />
+}
+  {
+    !window?.ethereum && <NotConnected />
+  }
+
+  
 
 
 
