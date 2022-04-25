@@ -1,0 +1,23 @@
+# Dependency directories
+node_modules/
+
+
+oke-domains/interface/.next
+oke-domains/interface/node_modules
+oke-domains/graph/node_modules
+oke-domains/subgraph/node_modules
+
+
+
+# TernJS port file
+.tern-port
+
+# Stores VSCode versions used for testing VSCode extensions
+.vscode-test
+
+# yarn v2
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*

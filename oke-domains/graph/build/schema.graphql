@@ -1,0 +1,16 @@
+type Domain @entity {
+  id: ID!
+  tokenID: BigInt!
+  name: String!
+  initMint: BigInt!
+  # createdAtTimestamp: BigInt!
+  creator: User!
+  owner: User!
+  finalTokenUri: String!
+}
+
+type User @entity {
+  id: ID!
+  domains: [Domain!]! @derivedFrom(field: "owner")
+  created: [Domain!]! @derivedFrom(field: "creator")
+}

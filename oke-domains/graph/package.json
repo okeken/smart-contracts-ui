@@ -1,0 +1,16 @@
+{
+  "name": "oke-domains",
+  "license": "UNLICENSED",
+  "scripts": {
+    "codegen": "graph codegen",
+    "build": "graph build",
+    "deploy": "graph deploy --node https://api.thegraph.com/deploy/ okeken/okeDomains",
+    "create-local": "graph create --node http://localhost:8020/ okeken/oke-domains",
+    "remove-local": "graph remove --node http://localhost:8020/ okeken/oke-domains",
+    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 okeken/oke-domains"
+  },
+  "dependencies": {
+    "@graphprotocol/graph-cli": "0.25.1",
+    "@graphprotocol/graph-ts": "0.24.1"
+  }
+}
