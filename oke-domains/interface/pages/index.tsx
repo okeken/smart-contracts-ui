@@ -9,7 +9,6 @@ import DomainAbi from "../constants/domains.json"
 import { ToastContainer, toast } from 'react-toastify';
 import {injected, supportedChainIds} from '../connectors'
 
-
 const checkChainId = async(supportedChains:number[])=>{
   const c = window?.ethereum?.request({ method: 'eth_chainId' })
   const d = await c
@@ -24,7 +23,7 @@ const Home: NextPage = () => {
   const [supported, setSupported]  = useState(false)
   const [loading, setLoading] = useState(true)
 
-
+  
   useEffect(()=>{
     (async ()=>{
       const chains = await checkChainId(supportedChainIds)
@@ -43,6 +42,7 @@ const Home: NextPage = () => {
   }
 
   return (
+    <div className='h-screen'>
     <div className='flex items-center justify-center h-screen bg-linear'>
       <Head>
         <title>All Domains</title>
@@ -56,6 +56,7 @@ const Home: NextPage = () => {
          <MintComponent supported={supported} />
       }
         
+    </div>
     </div>
   )
 }
@@ -110,7 +111,7 @@ const ConnectButton = ()=>{
 <div 
 
  onClick={connectNetwork}
-className='mt-3 text-white border border-red-500 hover:hover:bg-red-500 hover:border-0 cursor-pointer' style={{
+className='mt-3 text-white border border-red-500 cursor-pointer hover:hover:bg-red-500 hover:border-0' style={{
     borderRadius:"10px",
     padding:"10px",
 
@@ -125,7 +126,6 @@ className='mt-3 text-white border border-red-500 hover:hover:bg-red-500 hover:bo
 }
 
 const NotConnected = ()=>{
-
   if(!window.ethereum) return  <a 
   className=''
   href="https://metamask.io/download/" target="_blank" rel="noreferrer">

@@ -9,6 +9,7 @@ import { Domain, User } from "../generated/schema"
 export function handleDomainCreated(event: DomainCreated): void {
   let domain = Domain.load(event.params._tokenId.toString())
   let tokenContract = TokenContract.bind(event.address);
+//  let generalData = General.load("1")
  if (!domain) {
    domain = new Domain(event.params._tokenId.toString())
    domain.finalTokenUri=`${tokenContract.svgPartOne()}${event.params._domain}.${tokenContract.tld()}${tokenContract.svgPartTwo()}`

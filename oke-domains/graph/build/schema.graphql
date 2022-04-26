@@ -14,3 +14,7 @@ type User @entity {
   domains: [Domain!]! @derivedFrom(field: "owner")
   created: [Domain!]! @derivedFrom(field: "creator")
 }
+
+enum General @entity {
+  currentId
+}
