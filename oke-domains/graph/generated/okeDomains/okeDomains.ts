@@ -138,6 +138,21 @@ export class okeDomains extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
+  description(): string {
+    let result = super.call("description", "description():(string)", []);
+
+    return result[0].toString();
+  }
+
+  try_description(): ethereum.CallResult<string> {
+    let result = super.tryCall("description", "description():(string)", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toString());
+  }
+
   domains(param0: string): Address {
     let result = super.call("domains", "domains(string):(address)", [
       ethereum.Value.fromString(param0)

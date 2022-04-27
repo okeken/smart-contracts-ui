@@ -6,9 +6,9 @@ dataSources:
     name: okeDomains
     network: rinkeby
     source:
-      address: "0x2F571591435AB71083E43EB84156343b41304dd8"
+      address: "0x96510A66aAa01870ab38d45319EFC1041793425F"
       abi: okeDomains
-      startBlock: 10556250
+      startBlock: 10577627
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5

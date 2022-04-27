@@ -149,7 +149,7 @@ interface MintProps {
 }
 const MintComponent = ({supported}:MintProps)=>{
  
-  const contract = useContract('0x2F571591435AB71083E43EB84156343b41304dd8', DomainAbi , true)
+  const contract = useContract('0x96510A66aAa01870ab38d45319EFC1041793425F', DomainAbi , true)
   const disable = !supported
   const [domain, setDomain] = useState<string>('')
   const [loading, setLoading] = useState<boolean>(false)

@@ -7,14 +7,11 @@ type Domain @entity {
   creator: User!
   owner: User!
   finalTokenUri: String!
+  description: String!
 }
 
 type User @entity {
   id: ID!
   domains: [Domain!]! @derivedFrom(field: "owner")
   created: [Domain!]! @derivedFrom(field: "creator")
-}
-
-enum General @entity {
-  currentId
 }

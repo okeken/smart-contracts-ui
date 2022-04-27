@@ -22,6 +22,7 @@ export class Domain extends Entity {
     this.set("creator", Value.fromString(""));
     this.set("owner", Value.fromString(""));
     this.set("finalTokenUri", Value.fromString(""));
+    this.set("description", Value.fromString(""));
   }
 
   save(): void {
@@ -102,6 +103,15 @@ export class Domain extends Entity {
 
   set finalTokenUri(value: string) {
     this.set("finalTokenUri", Value.fromString(value));
+  }
+
+  get description(): string {
+    let value = this.get("description");
+    return value!.toString();
+  }
+
+  set description(value: string) {
+    this.set("description", Value.fromString(value));
   }
 }
 

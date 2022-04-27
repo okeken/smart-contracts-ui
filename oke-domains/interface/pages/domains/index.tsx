@@ -1,31 +1,11 @@
-import {FC} from 'react'
 import {NextPage} from 'next'
 import {useEffect, useState} from 'react'
-import { fetchAllDomains } from '../../functions/fetchAllDomains'
-import { formatEther } from '@ethersproject/units'
+import { fetchAllDomains,  fetchDomain} from '../../api'
+import Link from 'next/link'
+import CardDomain from '../../components/CardDomain'
+import ErrorBtn from '../../components/ErrorBtn'
 
 
-interface CardDomainProps {
-    name:string,
-    initMint:string,
-    id:string,
-}
-export const CardDomain = ({name='nill', initMint='0.0', id='0'}:CardDomainProps)=>{
-    return <div className='m-auto'>
-         <div key={id} className="flex items-center justify-center w-48 h-48 p-2 text-white break-all bg-gradient-to-r from-cyan-500 to-blue-500 justi rounded-xl" 
-    >
-        
-      <span className='text-4xl'>
-      {name} 
-      </span>
-      </div>
-      <div className='mt-1 text-center'> 
-      {
-       formatEther((initMint))
-      } ETH</div>
-        </div>
-    
-}
 interface Domain {
     id: string
     name: string
@@ -43,13 +23,20 @@ const AllDomains: NextPage = () => {
         .then(d=> setDomains(d))
         .then(()=> setLoading(false))
         .catch(e=>setError(true))
+
+        fetchDomain(1)
         
     }
     useEffect(()=>{
         fetchDomains()
     },[])
 
-    const _domain = domains.map(i => <CardDomain {...i} key={i.id}/>)
+    const _domain = domains.map(i => <Link href ={`/domains/${i.id}`} > 
+
+    <a className='block m-auto'>
+     <CardDomain {...i} key={i.id}/> 
+        </a>
+      </Link>)
 
     return (
         <div className='h-screen bg-gradient-to-r from-cyan-100 to-blue-100'>
@@ -70,20 +57,11 @@ const AllDomains: NextPage = () => {
 }
 
  {
-     error && <>
-     <div className='flex items-center justify-center m-auto'> 
- <div>
- Something Happened
- </div>
-<button type="button" 
-onClick={fetchDomains} 
-className= "inline-block p-2 ml-2 text-white rounded-xl bg-gradient-to-r from-green-400 to-blue-500">
-{
-    loading ? 'Loading...' : 'Try Again'
-}
-</button>
-</div>
-     </>
+     error && <ErrorBtn 
+     fetchData={fetchDomains} 
+     loading={loading}
+     />
+
  }
         </div>
     )
