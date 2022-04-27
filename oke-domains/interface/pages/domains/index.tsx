@@ -31,7 +31,7 @@ const AllDomains: NextPage = () => {
         fetchDomains()
     },[])
 
-    const _domain = domains.map(i => <Link href ={`/domains/${i.id}`} > 
+    const _domain = domains.map(i => <Link  key={i.id} href ={`/domains/${i.id}`} > 
 
     <a className='block m-auto'>
      <CardDomain {...i} key={i.id}/> 
